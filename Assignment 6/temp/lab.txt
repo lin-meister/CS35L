@@ -1,0 +1,152 @@
+1. Write a C transliteration program tr2b.c that uses getchar
+and putchar to transliterate bytes as described above.
+
+I wrote a program that took two strings, from and to, as arguments
+and checked if they had unequal lengths and if the from string
+had duplicate bytes. Then I looped over the input returned by
+getchar() and output the character using putchar(), converting
+if the input matched a byte in from to the corresponding byte in to.
+
+=====
+
+2. Write a C program tr2u.c that uses read and write to transliterate bytes,
+instead of using getchar and putchar. The nbyte arguments to read and write
+should be 1, so that the program reads and writes single bytes at a time.
+
+I used the same logic as my tr2b.c file, except I used read and write
+instead of getchar() and putchar().
+
+=====
+
+3. Use strace to trace the system calls and signals that were made by
+tr2b and tr2c. I randomly generated a large file of 5 MB to use in
+these tests.
+
+a. Copying one file to the other:
+
+$ strace -c ./tr2b 'abcd' 'wxyz' < large_file.txt > large_file_strace.txt
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 27.43    0.000031          16         2           read
+ 21.24    0.000024           3         9           mmap
+ 13.27    0.000015           4         4           mprotect
+  8.85    0.000010          10         1           write
+  7.08    0.000008           4         2           open
+  7.08    0.000008           8         1           munmap
+  6.19    0.000007           2         4           fstat
+  3.54    0.000004           4         1         1 access
+  1.77    0.000002           1         2           close
+  1.77    0.000002           2         1           execve
+  0.88    0.000001           1         1           brk
+  0.88    0.000001           1         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000113                    29         1 total
+
+$ strace -c ./tr2u 'abcd' 'wxyz' < large_file.txt > large_file_strace.txt
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 55.37    5.964909           1   5242880           write
+ 44.63    4.808650           1   5242882           read
+  0.00    0.000040           6         7           mmap
+  0.00    0.000027           7         4           mprotect
+  0.00    0.000014           7         2           open
+  0.00    0.000011          11         1           munmap
+  0.00    0.000008           4         2           close
+  0.00    0.000007           4         2           fstat
+  0.00    0.000007           7         1         1 access
+  0.00    0.000005           5         1           execve
+  0.00    0.000004           4         1           brk
+  0.00    0.000004           4         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00   10.773686              10485784         1 total
+
+As expected, since tr2u uses the system calls read() and write()
+for every byte it takes, it uses significantly more system calls,
+especially read() and write(), than tr2b. This is especially apparent
+when using a large file and comparing the differences.
+
+b. Copying one file to the terminal:
+
+$ strace -c ./tr2b 'abcd' 'wxyz' < large_file.txt
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 28.66    0.000045          23         2           read
+ 21.02    0.000033           4         9           mmap
+ 12.10    0.000019           5         4           mprotect
+ 10.83    0.000017           9         2           write
+  7.01    0.000011           3         4           fstat
+  6.37    0.000010           5         2           open
+  5.10    0.000008           8         1           munmap
+  2.55    0.000004           2         2           close
+  2.55    0.000004           4         1         1 access
+  1.91    0.000003           3         1           execve
+  1.27    0.000002           2         1           arch_prctl
+  0.64    0.000001           1         1           brk
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000157                    30         1 total
+
+$ strace -c ./tr2u 'abcd' 'wxyz' < large_file.txt
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 55.32    6.163302           1   5242880           write
+ 44.68    4.977769           1   5242882           read
+  0.00    0.000040           6         7           mmap
+  0.00    0.000028           7         4           mprotect
+  0.00    0.000015           8         2           open
+  0.00    0.000010          10         1           munmap
+  0.00    0.000009           5         2           fstat
+  0.00    0.000008           4         2           close
+  0.00    0.000008           8         1         1 access
+  0.00    0.000008           8         1           execve
+  0.00    0.000004           4         1           brk
+  0.00    0.000004           4         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00   11.141205              10485784         1 total
+
+Again, there is significantly more time and performance required for tr2u
+and its system calls when compared to tr2b.
+
+=====
+
+4. Use the time command to measure how much faster one program is,
+compared to the other, when copying the same amount of data.
+
+$ time ./tr2b abcd wxyz < large_file.txt > tr2b_output.txt
+
+real 0m0.003s
+user 0m0.000s
+sys 0m0.001s
+
+$ time ./tr2u abcd wxyz < large_file.txt > tr2u_output.txt
+
+real 0m6.783s
+user 0m0.299s
+sys 0m6.439s
+
+The results show that tr2u, which uses the system calls read() and
+write(), copies data slower than tr2b, which uses getchar() and
+putchar(). Since read() and write() are system call functions,
+they are expensive and involves passing the control of the program
+between the user and the OS, so this result is reasonable.
+
+Next, I compared the output of time when printing directly to terminal:
+
+$ time ./tr2b abcd wxyz < large_file.txt
+
+real 0m0.002s
+user 0m0.000s
+sys 0m0.001s
+
+$ time ./tr2u abcd wxyz < large_file.txt
+
+real 0m6.403s
+user 0m0.340s
+sys 0m6.013s
+
+Again, these results show that tr2b is faster than tr2u. The times here
+overall are faster than when we redirected the output to a file since
+the latter would have required extra steps.

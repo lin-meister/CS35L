@@ -1,0 +1,53 @@
+sort --version
+
+Run sort version to check we are using a new-enough version. The output shows
+that we are at version 8.22.
+
+=====
+
+export PATH=/usr/local/cs/bin:$PATH
+
+Add /usr/local/cs/bin to the path.
+
+=====
+
+od /dev/urandom | sed 's/ /\n/g' | head -n 10000000 > big_file.txt
+
+Generate a file using the od command with /dev/urandom as the input. The initial
+od command will create random double-precision floating point
+numbers with spaces between them, and the sed command will replace all of them
+with a new line so every one is on its own line. We limit it to 10,000,000 
+lines with head and redirect the result to big_file.txt.
+
+=====
+
+time -p sort -g big_file.txt > /dev/null
+
+Use time to measure the performance of invoking the sort -g command, which 
+compares according to general numerical value, on big_file.txt and send it to
+/dev/null. My output was:
+
+real 11.55
+user 54.60
+sys 0.45
+
+=====
+
+Now we run the benchmark with 2, 4, and 8 threads:
+
+time -p sort -g --parallel=2 big_file.txt > /dev/null
+
+real 24.26
+user 45.91
+sys 0.23
+
+time -p sort -g --parallel=4 big_file.txt > /dev/null
+real 14.68
+user 48.28
+sys 0.32
+
+time -p sort -g --parallel=8 big_file.txt > /dev/null
+real 10.07
+user 49.79
+sys 0.48
+

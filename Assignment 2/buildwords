@@ -1,0 +1,49 @@
+#! /bin/sh
+
+# Extract all lines containing <td> tags
+grep "<td>.*</td>" $1 > dict.txt
+
+# Remove the <td> tags
+sed 's/<[^>]*>//g' -i dict.txt
+
+# Remove empty lines
+sed '/^\s*$/d' -i dict.txt
+
+# Remove the blank space at the beginning of a line
+sed 's/^[ \t]*//' -i dict.txt
+
+# Remove every other line
+sed '1~2d' -i dict.txt
+
+# Replace comma with a new line to treat comma separated words as two words
+sed 's/, /\n/g' -i dict.txt
+
+# Replace space with a new line to treat comma separated words as two words
+sed 's/ /\n/g' -i dict.txt
+
+# Replace ` with '
+sed "s/\`/\'/g" -i dict.txt
+
+# Remove any remaining empty lines
+sed '/^\s*$/d' -i dict.txt
+
+# Convert all uppercase letters to lowercase
+tr '[:upper:]' '[:lower:]' < dict.txt > dict_lower.txt
+
+# Remove the old file with uppercase
+rm dict.txt
+
+# Replace it with the new file with all lowercase
+mv dict_lower.txt dict.txt
+
+# Remove any line containing non-Hawaiian characters
+sed "/[^pk\'mnwlhaeiou]/d" -i dict.txt
+
+# Check if there's any non-Hawaiian characters
+grep [^pk\'mnwlhaeiou] < dict.txt
+
+# Sort the file and output it in terminal
+sort -u dict.txt
+
+# Exit
+exit 0

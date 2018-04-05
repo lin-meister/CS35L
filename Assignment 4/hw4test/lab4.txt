@@ -1,0 +1,223 @@
+1. git clone ~eggert/src/gnu/diffutils hw4
+
+Clones the Diffutils repository and saves it to a directory called hw4.
+
+cd hw4
+
+Go into the directory that was cloned above.
+
+=====
+
+2. git log > git-log.txt
+
+Get a log of changes to Diffutil's master branch and save into a file
+called git-log.txt
+
+=====
+
+3. git tag > git-tag.txt
+
+Generate a list of tags used for Diffutils and save into a file called
+git-tag.txt
+
+=====
+
+4. git log --grep="quote 'like this'"
+
+Use grep to search the log of commits for the one entitled "maint:
+quote 'like this' or "like this", not `like this'". The commit id is:
+62ca21c8c1a5aa3488589dcb191a4ef04ae9edaf.
+
+git format-patch -M -C 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f~1..
+62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f --stdout > quote-patch.txt
+
+Get the commit and create a patch for it, then redirect it to
+a new file quote-patch.txt using the --stdout option.
+
+=====
+
+5. git checkout v3.0
+
+Checkout the version 3.0 of Diffutils in the repository. Output is a note
+indicating that we are checking out 'v3.0' and a message stating that
+"You are in 'detached HEAD' state".
+
+=====
+
+6. patch -p1 < quote-patch.txt
+
+Patch the version 3.0 branch of Diffutils with quote-patch.txt. 
+
+=====
+
+7. git status
+
+Get an overview of the untracked files and changes not staged for commit.
+Shows all the modified and untracked files.
+
+=====
+
+8. emacs
+
+Start a session with the Emacs editor.
+
+C-h ? k C-x v =
+
+Get help and display the documentation for the key sequence C-x v =.
+The key sequence runs the vc-diff command which displays differences
+between file revisions.
+
+C-h ? k C-x v u
+
+Get documentation for C-x v u. The key sequence runs the vc-rever command
+which reverts working copies of the selected fileset to their repository
+contents.
+
+C-x v =
+
+Switch into the diff buffer.
+
+C-h ? C-c C-a
+
+Get documentation for C-c C-a. The key sequence runs the diff-apply-hunk
+command which will apply the changes in a diff file one by one.
+
+C_h ? C-c C-c
+
+Get documentation for C-c C-c. The key sequence runs the diff-goto-source
+command which will jump to the corresponding source line in the source file
+that the hunk in the diff buffer is on.
+
+=====
+
+9. C-x v u
+
+This command reverts changes so that the files match their repository
+contents. I used this to undo all changes to all files other than .c files. 
+
+C-x v = M-n C-u C-c C-a
+
+This command enters a file's diff mode, goes to the next hunk, and reverts
+it. I used this to undo all the changes to .c files other than changes to
+character string constants (outside of the comments).
+
+=====
+
+10. ls src/*.c.rej
+
+Get a list of all the files ending in .c.rej. I then copied the changes
+in the lines back to the corresponding .c files.
+
+=====
+
+11. git clean -f 
+
+Removes all the untracked files.
+
+=====
+
+12. git status
+
+As expected, shows 6 modified files, all in the src directory:
+cmp.c, diff.c, diff3.c, dir.c, sdiff.c, util.c
+
+git diff > quote-3.0-patch.txt
+
+Get the difference between branches and redirect it into the file
+quote-3.0-patch.txt
+
+cat -n quote-3.0-patch.txt
+
+Print out the patch file to check its line count. As expected, it is
+between 300 and 400 lines long.
+
+=====
+
+13. ./bootstrap
+
+Get other files needed to build by extracting from other source packages.
+Output returns an error that 'help2man' is not found.
+
+export PATH=/usr/local/cs/bin:$PATH
+
+Adds the /usr/local/cs/bin programs to the path so that we can find
+help2man, which is located in that directory.
+
+./bootstrap
+
+Run the bootstrap command, gets the files successfully now.
+
+wget http://web.cs.ucla.edu/classes/fall16/cs35L/assign/diffutils-gets.diff
+
+Get the diffutils-gets patch using wget.
+
+patch -p0 < diffutils-gets.diff
+
+Apply the patch. Patches the file lib/stdio.in.h.
+
+./configure
+
+Run the configure script to prepare the system for building.
+
+make
+
+Build the system.
+
+make check
+
+Check the make
+
+diff . -
+
+Outputs a message telling us that cannot compare '-' to directory.
+
+diff --help
+
+Displays help for the diff command.
+
+=====
+
+14. mkdir diffutils-3.0-patch
+mkdir diffutils-3.0
+
+Make a directory diffutils-3.0-patch and diffutils-3.0
+
+cp src/*.c diffutils-3.0-patch
+
+Copy the source code inside the current modified version of Diffutils 3.0
+into the directory diffutils-3.0-patch
+
+git clone ~eggert/src/gnu/diffutils orig
+
+Clone the original repository into a local directory orig.
+
+cd orig
+
+Go into the cloned original repo.
+
+git checkout v3.0
+
+Checkout the original version 3.0 directory.
+
+cp src/*.c ../diffutils-3.0
+
+Copy the source files inside the original, unmodified repo and place it in
+the parent directory's diffutils-3.0 folder.
+
+cd ..
+
+Go back to the home directory.
+
+./src/diff -pru diffutils-3.0 diffutils-3.0-patch > quote-3.0-test.txt
+
+Compare diffutils-3.0 and diffutils-3.0-patch using our implementation of
+diff and redirect into quote-3.0-test.txt
+
+=====
+
+15. diff quote-3.0-test.txt quote-3.0-patch.txt
+
+Compare the two patches. There are differences, but they are innocuous
+since it seems where the files differ are just the directory locations
+of the files that the two patches are modifying. Other differences are
+just regarding the changes to chracter string constants.

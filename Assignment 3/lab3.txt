@@ -1,0 +1,177 @@
+mkdir hw3
+
+Make a directory hw3
+
+=====
+
+cd hw3
+
+Enter the directory created.
+
+=====
+
+mkdir temp
+
+Make a directory to hold the Coreutils files.
+
+=====
+
+cd temp
+
+Enter the temp directory.
+
+=====
+
+wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-7.6.tar.gz
+
+Use wget to grab the Coreutils 7.6 zip.
+
+=====
+
+tar -xzvf coreutils-7.6.tar.gz
+
+Extract the Coreutils zip file.
+
+=====
+
+cd coreutils-7.6
+
+Navigate into the unzipped directory.
+
+=====
+
+./configure
+
+Runs the configuration process of the Coreutils package.
+
+=====
+
+make
+
+Runs the build process of the Coreutils package.
+
+=====
+
+make install
+
+Runs the installation process of the Coreutils package. The output
+seems to indicate that files and directories are being accessed
+by make. Some files and directories couldn't be accessed because of
+permissions so there was an error printed in the terminal.
+
+=====
+
+./src/ls -l /bin/bash
+
+This runs the modified version of ls inside Coreutils instead of
+the ls inside /bin on the /bin/bash directory. The output has the
+date formatted as YYYY-MM-DD.
+
+=====
+
+cd ..
+
+Navigate back to the temp directory above the Coreutils directory.
+
+=====
+
+cp -r coreutils-7.6 coreutils-7.6_copy
+
+Create a copy of the Coreutils folder that will serve as the version with the
+unmodified ls. It is the same level in the directory tree as the original
+directory.
+
+=====
+
+cd coreutils-7.6
+
+Go back to the Coreutils directory that we will create the patch file in.
+
+=====
+
+emacs patch_file
+
+Create a patch_file file to copy and paste the patch content from Brady.
+
+=====
+
+patch -p1 < patch_file
+
+The patch command applies a diff file (patch file) to an original.
+The -pnum option allows us to strip the first num slashes from each file
+name found in the patch file, where num represents a number. We are in
+the directory above the src directory where the ls program file is located, and
+since this patch file will modify the ls program, we will use patch -p1.
+
+=====
+
+make
+
+Build the directory holding coreutils with the patched
+ls.c file (but doesn't install). The output is shorter than what
+outputed on the previous make command, with less CC, CCLD, and GEN output.
+This is probably because the only files that have changed
+and required building are the ones related to the patched ls.
+
+=====
+
+./src/ls -l /bin/bash
+
+Test the patched ls. As expected, it outputs the date in the traditional Unix
+format.
+
+=====
+
+../coreutils-7.6_copy/src/ls -l /bin/bash
+
+Test the unpatched ls. As expected, it outputs the date in the YYYY-MM-DD
+format.
+
+=====
+
+emacs test1
+
+Create a recently modified file.
+
+=====
+
+./src/ls -l test1
+
+Test the patched ls on the recently modified file. Again, it outputs the date
+in the traditional Unix format.
+
+=====
+
+../coreutils-7.6_copy/src/ls -l /bin/bash
+
+Test the unpatched ls on the recently modified file. Again, as expected,
+the date is outputed in YYYY-MM-DD format.
+
+=====
+
+emacs test2
+
+Create a file called test2. Currently its information shows up as
+just created, but we will use the touch command to change it to appear
+at least a year old.
+
+=====
+
+touch -t 201510010000 test2
+
+Change the access and modification time of test2 to 10-01-2015 at 00:00.
+
+=====
+
+./src/ls -l test2
+
+Test the patched ls on the file older than one year. It outputs the month
+and date. Where the time was printed in the previous ls output is replaced
+by the year instead.
+
+=====
+
+../coreutils-7.6_copy/src/ls -l test2
+
+Test the unpatched ls on the file older than one year. Again, as expected,
+it prints the date format in YYYY-MM-DD.

@@ -1,0 +1,394 @@
+locale
+
+We are not in the standard C locale yet.
+
+=====
+
+export LC_ALL='C'
+
+This sets the locale environment to C.
+
+=====
+
+locale
+
+Lists the LC environment variables, of which almost all are set to 'C', 
+including LC_CTYPE. This seems to confirm that we are in the standard C locale.
+
+=====
+
+tr [:upper:] [:lower:] < /usr/share/dict/words > ~/hw2/words
+
+This converts all the uppercase letters in the words file
+to lowercase letters and saves its output in a new file in the
+working directory.
+
+=====
+
+sort words > words_sorted
+
+This sorts the words and outputs it to a new file in the
+current directory called words_sorted. 
+
+=====
+
+rm words
+mv words_sorted words
+
+Deletes the unsorted words file and renames words_sorted
+to words to stay consistent with naming.
+
+=============================================================
+TR PRACTICE WITH ASSIGN2.HTML
+=============================================================
+
+=====
+
+wget -O assign2.txt web.cs.ucla.edu/classes/fall16/cs35L/assign/assign2.html
+
+Downloads the HTML file and saves it to a text file. No output, but a
+quick ls on the current working directory shows that we have downloaded
+successfully.
+
+=====
+
+tr -c 'A-Za-z' '[\n*]' < assign2.txt
+
+Displays a list of words that were seen on the webpage, with lines
+between them, ranging from a few lines to many.
+
+Explanation: tr is a command that translates or deletes characters. The basic
+format is tr SET1 SET2, which will cause characters in SET1 to be translated
+to SET2. The -c option lets us use the complement of SET1. So this command
+would take the complement of the set of characters from A-Z and a-z, or all
+non-alphabetic characters, and convert it to any number of new lines, in the
+text file.
+
+=====
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.txt
+
+Displays a list of words that were seen on the webpage, along with
+the names of the HTML tags surrounding them (i.e. <p>, <body>, <html>),
+without the '<' and '>' characters.
+
+Explanation: In this command we again convert non-alphabetic characters
+to new lines. However we also added an -s option, which allows us to replace
+multiple occurrences of the new line with a single occurrence, i.e. we
+squeeze multiple new lines into one.
+
+=====
+
+tr -cs 'A-Za-z' '[\n*]' | sort < assign2.txt
+
+Displays a list of all the lines from the source HTML of the webpage,
+sorted by alphabetical order of the first letter in each line.
+
+Explanation: The first part of this command does exactly what the last
+command did, but the sort command allows us to sort the result of the last
+command.
+
+=====
+
+tr -cs 'A-Za-z' '[\n*]' | sort -u < assign2.txt
+
+Seems to the display the same content as the last command.
+
+Explanation: The -u option outputs only unique lines. So, this command
+takes the sorted lines in the webpage and only lists unique occurrences
+of those lines. I think that, however, the webpage does not have many
+identical lines so the output result seems to be the same as when we did
+not account for unique occurrences in the last command.
+
+=====
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort -u  | comm - words
+
+Displays a list of words from the two files.
+
+Explanation: The comm command compares two sorted files line by line,
+in this case assign2.txt and words. With no options, it produces output
+in 3 columns. The 1st column contains lines unique to the first file,
+the 2nd contains lines unique to the second file, and the 3rd contains
+lines common to both files.
+
+=====
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.txt | sort -u | comm -23 - words
+
+Explanation: Adding the -23 option to comm suppress the 2nd and 3rd
+columns, so it only lists lines unique to the first file, assign2.txt.
+
+=============================================================
+MAKING THE HAWAIIAN DICTIONARY PART 1: EXTRACTING TD
+=============================================================
+
+=====
+
+wget -O e2h.txt http://mauimapp.com/moolelo/hwnwdseng.htm
+
+Downloads the HTML file and saves it to a text file called e2h.txt.
+No output, but a quick ls on the current working directory shows
+that we have downloaded successfully.
+
+=====
+
+grep "<td>.*</td>" e2h.txt > hwords.txt
+
+Uses the grep command to search for any lines matching a pattern of
+<td>...Any characters here...</td> in the e2h.txt file and directs
+the output to a file called hwords.txt. These lines will contain the
+Hawaiian words.
+
+=====
+
+cat hwords.txt
+
+Display the hwords.txt in the terminal using the cat command to
+check if the correct content has been copied.
+
+=====
+
+=============================================================
+MAKING THE HAWAIIAN DICTIONARY PART 2: DELETING ENGLISH WORDS
+=============================================================
+
+sed 's/<[^>]*>//g' -i hwords.txt
+
+Uses the sed command to find for all occurrences of an HTML tag and replace
+them with "" (nothing), i.e. deleting all HTML tags in the hwords.txt file.
+The -i option allows us to modify the file in place directly.
+
+=====
+
+sed '/^\s*$/d' -i hwords.txt
+
+Deletes all lines that have any number of whitespaces between the
+beginning and end of the line from the file directly, i.e. deletes
+all the empty lines.
+
+=====
+
+sed 's/^[ \t]*//' -i hwords.txt
+
+Finds the first occurrence of any number of spaces or tabs at the beginning
+of a line, and replaces it with "" (nothing), i.e. deletes all the blank
+space at the beginning of a line.
+
+=====
+
+sed '1~2d' -i hwords.txt
+
+Starts at the first line and deletes every second line in the hwords.txt
+file, i.e. deletes every other line.
+
+=====
+
+cat hwords.txt
+
+Printing the hwords.txt file in the terminal after running the sed
+commands above seem to indicate that we have deleted the English words.
+
+==================================================================
+MAKING THE HAWAIIAN DICTIONARY PART 3: DELETING SPECIAL CHARACTERS
+==================================================================
+
+=====
+
+sed 's/, /\n/g' -i hwords.txt
+
+Finds any occurrence of ", " and replaces with a '\n', i.e. inserts
+a new line.
+
+=====
+
+sed 's/ /\n/g' -i hwords.txt
+
+Same logic as the last command, but inserts a new line after a space
+instead.
+
+=====
+
+sed "s/\`/\'/g" -i hwords.txt
+
+Finds and replaces all occurrences of ` with '. I used double-quotes
+surrounding the substitute expression instead of single-quotes.
+
+=====
+
+cat hwords.txt
+
+Print the file in terminal to check again.
+
+=====
+
+sed '/^\s*$/d' -i hwords.txt
+
+I noticed a blank line in the output by the last command so I removed
+all the blank lines again to make sure. The blank line was probably
+inserted when I was replacing ", " and " " with "\n" earlier.
+
+=====
+
+==============================================================
+MAKING THE HAWAIIAN DICTIONARY PART 4: CONVERTING TO LOWERCASE,
+DELETING NON-HAWAIIAN CHARACTERS, AND SORTING THE FILE
+==============================================================
+
+tr '[:upper:]' '[:lower:]' < hwords.txt > hwords_lower.txt
+
+Converts all the uppercase letters to lowercase in hwords.txt and
+outputs it to a new file, hwords_lower.txt
+
+=====
+
+rm hwords.txt
+
+Removes hwords.txt
+
+=====
+
+mv hwords_lower.txt hwords.txt
+
+Renames hwords_lower to be the new hwords.txt file
+
+=====
+
+sed "/[^pk\'mnwlhaeiou]/d" -i hwords.txt
+
+This removes any line that contains non-Hawaiian characters. The caret
+inside the range brackets means the complement of that set of Hawaiian
+characters.
+
+=====
+
+grep [^pk\'mnwlhaeiou] < hwords.txt
+
+This searches the file for any non-Hawaiian characters. It does not
+output anything, so this should mean that the file has only Hawaiian
+characters left.
+
+=====
+
+sort -u -o hwords.txt < hwords.txt
+
+Sorts the hwords.txt and filters out duplicate occurrences. The -o
+option allows us to output the result to a file, but since the output
+file and the input file name are the same, it will simply replace the
+original with the sorted version.
+
+=====
+
+./buildwords script
+
+#! /bin/sh
+
+# Extract all lines containing <td> tags
+grep "<td>.*</td>" $1 > dict.txt
+
+# Remove the <td> tags
+sed 's/<[^>]*>//g' -i dict.txt
+
+# Remove empty lines
+sed '/^\s*$/d' -i dict.txt
+
+# Remove the blank space at the beginning of a line
+sed 's/^[ \t]*//' -i dict.txt
+
+# Remove every other line
+sed '1~2d' -i dict.txt
+
+# Replace comma with a new line to treat comma separated words as two words
+sed 's/, /\n/g' -i dict.txt
+
+# Replace space with a new line to treat comma separated words as two words
+sed 's/ /\n/g' -i dict.txt
+
+# Replace ` with '
+sed "s/\`/\'/g" -i dict.txt
+
+# Remove any remaining empty lines
+sed '/^\s*$/d' -i dict.txt
+
+# Convert all uppercase letters to lowercase
+tr '[:upper:]' '[:lower:]' < dict.txt > dict_lower.txt
+
+# Remove the old file with uppercase
+rm dict.txt
+
+# Replace it with the new file with all lowercase
+mv dict_lower.txt dict.txt
+
+# Remove any line containing non-Hawaiian characters
+sed "/[^pk\'mnwlhaeiou]/d" -i dict.txt
+
+# Check if there's any non-Hawaiian characters
+grep [^pk\'mnwlhaeiou] < dict.txt
+
+# Sort the file and output it in terminal
+sort -u dict.txt
+
+# Exit
+exit 0
+
+
+==============================
+SPELL CHECKING
+==============================
+
+comm -23 hwords.txt hwords.txt
+
+Check the hawaiian dictionary against itself. As expected, no output,
+meaning it's the same.
+
+=====
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.txt | tr [:upper:] [:lower:]
+| sort -u | comm -23 - words | wc -l
+
+Counts the number of misspelled English words in the assign2 webpage.
+There are 33.
+
+=====
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.txt | tr [:upper:] [:lower:]
+| sort -u | comm -23 - hwords.txt | wc -l
+
+Counts the number of misspelled Hawaiian words in the assign2 webpage.
+There are 406.
+
+=====
+
+tr -cs 'A-Za-z' '[\n*]' < words | tr [:upper:] [:lower:]
+| sort -u | comm -23 - hwords.txt
+
+Takes in the English dictionary and compares it with the Hawaiian dictionary.
+Outputs the  words that are misspelled in Hawaiian but not in English,
+i.e. contains non-Hawaiian characters. Examples include: kaiser,
+chandelier.
+
+=====
+
+tr -cs 'A-Za-z' '[\n*]' < words | tr [:upper:] [:lower:]
+| sort -u | comm -23 - hwords.txt | wc -l
+
+Counts the number of words that are misspelled in Hawaiian but not in English.
+There are 418593.
+
+=====
+
+tr -cs 'A-Za-z' '[\n*]' < hwords.txt | tr [:upper:] [:lower:]
+| sort -u | comm -23 - words
+
+Takes in the Hawaiian dictionary and compares it with the English dictionary.
+Outputs the words that are misspelled in English but not in Hawaiian.
+Examples include: wiki, halau.
+
+=====
+
+tr -cs 'A-Za-z' '[\n*]' < hwords.txt | tr [:upper:] [:lower:]
+| sort -u | comm -23 - words | wc -l
+
+Counts the number of words that are misspelled in English but not in Hawaiian.
+There are 110.
+

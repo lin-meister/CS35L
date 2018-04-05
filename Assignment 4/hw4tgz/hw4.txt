@@ -1,0 +1,155 @@
+2. cd orig
+
+Go into the folder holding a copy of the original repo.
+
+git checkout v3.0 -b quote
+
+Checkout the version 3.0 branch into a new branch called "quote"
+
+=====
+
+3. patch -p1 < ../quote-3.0-patch.txt
+
+Apply the patch on the new branch.
+
+=====
+
+4. emacs
+
+Start a session with the Emacs editor.
+
+C-h ? k C-x 4 a
+
+Get documentation for this key sequence. It finds the change log file
+in other window and enables us to add an entry and item in the change log.
+
+=====
+
+5. C-x 4 a changed ` to ' C-x C-s
+
+Added a change log entry for the files cmp.c, diff.c, diff3.c,
+dir.c, sdiff.c, and util.c.
+
+=====
+
+6. git add cmp.c
+git add diff.c
+git add diff3.c
+git add dir.c
+git add sdiff.c
+git add util.c
+
+Use git add to stage the files for commit.
+
+git commit
+changed ` to '
+
+Commit the files, using the change log entry as the commit message.
+
+=====
+
+7. git format-patch -1 --stdout > formatted-patch.txt
+
+Format the patch and put it in a file formatted-patch.txt
+
+=====
+
+8. cp formatted-patch.txt formatted-patch-chaoran.txt
+
+Copy the formatted patch
+
+scp formatted-patch-chaoran.txt muslim@lnxsrv07.seas.ucla.edu:~/assignment4/
+
+Securely send the formatted patch to my partner's directory. The action
+prompted the password to access my partner's directory which he entered.
+My partner's UID is 704666892.
+
+git checkout v3.0 -b partner
+
+Checkout version 3.0 into a new temporary branch partner.
+
+git am formatted-patch-razi.txt
+
+Apply my partner's patch.
+
+./bootstrap
+
+wget http://web.cs.ucla.edu/classes/fall16/cs35L/assign/diffutils-gets.diff
+
+Get the diffutils-gets patch using wget.
+
+patch -p0 < diffutils-gets.diff
+
+Apply the patch. Patches the file lib/stdio.in.h.
+
+./configure
+
+Run the configure script to prepare the system for building.
+
+make
+
+Build the system.
+
+make check
+
+Check that the build worked. The output was:
+
+Making check in lib
+make[1]: Entering directory '/w/home.15/class/classnin/hw4/orig/lib'
+make  check-recursive
+make[2]: Entering directory '/w/home.15/class/classnin/hw4/orig/lib'
+make[3]: Entering directory '/w/home.15/class/classnin/hw4/orig/lib'
+make[3]: Leaving directory '/w/home.15/class/classnin/hw4/orig/lib'
+make[2]: Leaving directory '/w/home.15/class/classnin/hw4/orig/lib'
+make[1]: Leaving directory '/w/home.15/class/classnin/hw4/orig/lib'
+Making check in src
+make[1]: Entering directory '/w/home.15/class/classnin/hw4/orig/src'
+make  check-am
+make[2]: Entering directory '/w/home.15/class/classnin/hw4/orig/src'
+make[2]: Nothing to be done for 'check-am'.
+make[2]: Leaving directory '/w/home.15/class/classnin/hw4/orig/src'
+make[1]: Leaving directory '/w/home.15/class/classnin/hw4/orig/src'
+Making check in tests
+make[1]: Entering directory '/w/home.15/class/classnin/hw4/orig/tests'
+make  check-TESTS
+make[2]: Entering directory '/w/home.15/class/classnin/hw4/orig/tests'
+make[3]: Entering directory '/w/home.15/class/classnin/hw4/orig/tests'
+/bin/sh: /bin/sh: cannot execute binary file
+make[3]: *** [Makefile:1309: basic.log] Error 126
+make[3]: Leaving directory '/w/home.15/class/classnin/hw4/orig/tests'
+make[2]: *** [Makefile:1291: check-TESTS] Error 2
+make[2]: Leaving directory '/w/home.15/class/classnin/hw4/orig/tests'
+make[1]: *** [Makefile:1403: check-am] Error 2
+make[1]: Leaving directory '/w/home.15/class/classnin/hw4/orig/tests'
+make: *** [Makefile:1017: check-recursive] Error 1
+
+=====
+
+9. make distdir
+
+Check that the ChangeLog entry works.
+
+emacs diffutils-3.0.1-e05b/ChangeLog
+
+Check the change log generated. As expected, it shows a log of the
+commits of the repo.
+
+=====
+
+10. This was a particularly difficult process since it required
+further tools to successfully run the gitk command. I installed Xming
+which allowed me to start an X server. I then started a new PuTTY
+session with the X11 forwarding option enabled. This set up
+ssh to be able to use the gitk command.
+
+cd ~eggert/src/gnu/emacs
+
+Navigate to the directory where the copy of the master branch is located.
+
+export PATH=/usr/local/cs/bin:$PATH
+
+I then added /usr/local/cs/bin to my path.
+
+gitk
+
+Starts a graphical interface for viewing the mergepoints.

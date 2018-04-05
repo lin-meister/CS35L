@@ -1,0 +1,93 @@
+1.1
+1. e m a c s SP e x e r 1 . h t m l 
+2. C-s P U B L I C Enter
+Searches for PUBLIC, Enter moves the cursor to end of word.
+3. C-s L a b o r a t o r y M-b
+Searches for Laboratory, M-b moves the cursor to the beginning of the word.
+4. C-s s e l f - r e f e r e n t i a l M-b M-b
+Same logic as 1.1.3
+5. C-s a r r o w M-b
+Same logic as 1.1.3
+6. C-e
+7. C-a
+8. A possible way would be to search through the file.
+9. No
+10. C-x C-c
+1.2
+1. e m a c s SP e x e r 2 . h t m l 
+2. M-g g 1 8 Enter C-k
+M-g g navigates to the specified line. C-k kills to the end of the line.
+3. C-s D E C-a C-k
+Searches for the comment DELETEME, but DE seems to be sufficient. C-a moves the
+cursor to the beginning of the line and combining it with C-k seems to be an 
+efficient keystroke combination to delete the comment.
+4. C-s < ! C-a M-k M-k
+Same logic as 1.2.3
+5. C-s < ! C-d C-d C-d C-d C-d C-d DEL DEL
+Same logic, but opted to use more manual deleting keystrokes.
+1.3
+1. e m a c s SP e x e r 3 . h t m l 
+2. M-< C-s A s s i g n m e n t 1
+M-% A s s i g n m e n t 3 7 Enter SP SP
+Navigates to the beginning of the buffer, searches for Assignment 1 
+and replaces it with Assignment 37. The two spaces
+ensure that the first 2 occurrences are replaced.
+3. M-< C-s U T F - 8
+M-% U S - A S C I I Enter SP
+Navigates to the beginning of the buffer, searches for UTF-8
+and replaces it with US-ASCII. The space
+ensure that the first occurrence in the file is replaced.
+4. M-< C-s < / o l >
+C-a C-o
+Navigates to the beginning of the buffer, searches for </ol>. C-a goes to the 
+beginning of the line and C-o inserts a blank line.
+5. C-x C-c y 
+diff -u exer1.html exer3.html >exer3.diff
+1.4
+1. cat exer2.html exer2.diff >exer4.html Enter
+2. emacs exer4.html Enter
+3. M-> C-u 5 C-p C-f C-@ C-e M-w M-g g 338 Enter C-y C-k Backspace
+This copies the last chunk of diff output back to its original location.
+We first go to the end of the buffer and navigate to that line, copy it, and
+navigate to the line where it was to paste it there.
+4. M-> C-s -<! C-s C-s C-s Enter C-a C-f C-@ C-e C-n C-n M-w 
+M-< C-s <h2>S C-n C-n C-y C-a C-d C-p C-d
+This copies the "You can learn more about HTML comments..." comment back to 
+where it was. Since this is a multi-line comment,after copying and pasting it, 
+a few more keystrokes are needed to delete the minus signs that were there to 
+symbolize the deletion of the comment from the original.
+M-> C-s -<! C-s C-s Enter C-a C-f C-@ C-e M-w M-< C-s <h2>H C-n C-n C-y 
+This copies the next HTML comment back to where it was. The C-a goes to 
+the beginning of the comment and C-f skips the initial - character to get to 
+the beginning of the comment. A search is run to get to where the original
+position is and the comment is pasted there.
+M-> C-s -<! C-s Enter C-a C-f C-@ C-e M-w M-< C-s <h2>L C-n C-n C-y 
+This copies the last HTML comment back to where it was.
+5. M-> C-s --- C-s C-s C-a C-@ M-> C-w
+This searches for the start of the diff output, sets mark there, then selects
+the text all the way to the end of the buffer and kills the region.
+6. C-y
+This restores the region last killed by yanking.
+7. M-> C-s --- C-s C-s C-a C-o <!-- M-> -->
+This inserts HTML comments on both sides of the diff output. Moving the cursor 
+to the beginning is done by the same search from #5. 
+8. M-< C-s <ol> M-% <Ol> Enter !
+This goes to the beginning of the buffer and searches for <ol>, and replaces
+all matches with <Ol>
+9. diff -u exer1.html exer4.html >exer4.diff
+1.5
+1. M-x m a k e - d i r e c t o r y Enter j u n k Enter
+Creates a directory called junk within Emacs.
+2. C-x d j u n k Enter C-x C-f h e l l o . c Enter
+Uses dired navigation and creates (finds) a new file hello.c
+3. M-x c o m p i l e Enter C-a C-k g c c SP h e l l o . c Enter
+Compiles the hello.c file. The default command after the M-x compile command 
+seems to be make -k, so I used C-a C-k to delete that and replaced it with the 
+command gcc hello.c to compile the C file using the GNU C compiler.
+4. M-x c o m p i l e Enter . / h e l l o Enter
+M-x b * c o m p i l a t i o n * Enter C-x C-w h e l l o - o u t Enter
+Executes the file, then switches to compilation buffer and writes the output to 
+a file called hello-out.
+5. C-x C-f h e l l o - o u t Enter 
+M-< C-@ M-> M-x append-to-file Enter ~ / h w 1 / k e y 1 . t x t
+Enters the hello-out file and writes it to a log.

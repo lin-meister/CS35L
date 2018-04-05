@@ -1,0 +1,42 @@
+Q1. Why did Brady's patch remove the line "case_long_iso_time_style:"?
+Was it necessary to remove that line? Explain.
+
+In the original file there was a goto that went to that line.
+However in the patch the goto was deleted, so that line would never
+be touched upon. It was not necessary to remove that line because either
+way the result would be the same.
+
+=====
+
+Q2. If your company adopts this patched version of Coreutils
+instead of the default one, what else should you watch out for?
+Might this new version of Coreutils introduce other problems with your
+application, perhaps in countries where users don't speak English and
+don't understand English-format dates?
+
+If another part of the program was dependent on the old date and time
+format, it could malfunction due to the patched version. Since the
+patched date and time format is specific for an English format, users
+from other countries could be confused by it.
+
+=====
+
+Q3. What happens when this script is invoked on an
+empty file like /dev/null, and why?
+
+The script outputs random lines from a given file. When
+run on an empty file, it returns an IndexError: list index
+out of range. This may be because there are no lines in an
+empty file to work with.
+
+=====
+
+Q4. What happens when this script is invoked with Python 3
+rather than Python 2, and why? (You can run Python 3 on the
+SEASnet hosts by using the command python3 instead of python.)
+
+When invoking the script with Python 3 I get a SyntaxError
+on line 65 "except IOError as (errno, strerror)". This is because
+in Python 2 exceptions were iterable. However, this feature was
+removed in Python 3 so it gives an error.
+

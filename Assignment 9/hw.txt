@@ -1,0 +1,22 @@
+1. Yes, it would still be secure. This is because our bytes will still be
+encrypted as they travel across the network, and it wouldn't be able to be
+decrypted without having access to the private key.
+
+However, if they tapped our keyboards and observed all of our team's keystrokes
+then they would be ableto know exactly what we typed in creating the password
+for generating the private key, and thus be able to obtain the private key
+and gain access to our data, rendering our network insecure.
+
+It could still be insecure if other teams had temporary physical control of
+the USB, since they could read the system files if they are on the USB and
+obtain the private key from there.
+
+2. The gpg --verify command only verifies that the digital signature is
+correct. However, a person other than the creator of the signature can still
+have access to the detached signature via decrypting the message digest if they
+have access to the sender's private key, so there is no guarantee that it can
+prove origin of the signature.
+
+To fix this, we could use a certificate authority (CA), which can issue
+digital certificates that certify the ownership of my public key. The
+receiver can then have the certified public key to match to the signature.

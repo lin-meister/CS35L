@@ -1,0 +1,97 @@
+1. man -k
+
+2. which cp
+/bin/cp
+
+which wc
+/usr/bin/wc
+
+3. cd /usr/bin
+find ? -executable
+[ - Bash command, evaluates a conditional expression and returns a status.
+w - Show who is logged on and what they are doing.
+X - A portable, network-transparent window system
+
+4. readlink -f /usr/bin/emacs
+/usr/bin/emacs-23.1 is executed.
+
+5. g+s: give permission to setgid to group (so any user that accesses the
+file inherits file's group's permissions)
+o-x: remove permission to execute from other users not in the file's group.
+
+6. find / -mtime 21
+Finds files modified in the last 21 days (3 weeks).
+
+7. find / -mtime 21 -type d
+The -type d limits the search to only directories.
+
+8. cd /usr/bin
+find -type l | wc -l
+242 symbolic links.
+
+9. find . -printf "%T@ %Tc %p\n" | sort -n
+./.login
+
+10. man locale
+The command gets its data from the current locale environment. When 
+invokedwithout arguments, it summarizes the current locale environment
+for each locale category defined by the LC_* environment variables.
+
+11. C-h a sort 
+Buffer-menu-sort	      M-x ... RET
+   Sort Tabulated List entries by the column at point.
+sort-columns		      M-x ... RET
+   Sort lines in region alphabetically by a certain range of columns.
+sort-fields		      M-x ... RET
+   Sort lines in region lexicographically by the ARGth field of each
+   line.
+sort-lines		      M-x ... RET
+   Sort lines in region alphabetically; argument means descending
+   order.
+sort-numeric-fields	      M-x ... RET
+   Sort lines in region numerically by the ARGth field of each line.
+sort-pages		      M-x ... RET
+   Sort pages in region alphabetically; argument means descending
+   order.
+sort-paragraphs		      M-x ... RET
+   Sort paragraphs in region alphabetically; argument means descending
+   order.
+sort-regexp-fields	      M-x ... RET
+   Sort the text in the region region lexicographically.
+tabulated-list-col-sort	      M-x ... RET
+   Sort Tabulated List entries by the column of the mouse click E.
+tabulated-list-sort	      M-x ... RET
+   Sort Tabulated List entries by the column at point.
+
+12. C-h b 
+C-M-a:
+beginning-of-defun (move backward to beginning of defun)
+C-M-b:
+backward-sexp (move backward across one balanced expression (sexp).)
+C-M-c:
+exit-recursive-edit (Exit from the innermost recursive edit or minibuffer.)
+C-M-d:
+down-list (Exit from the innermost recursive edit or minibuffer.)
+C-M-e:
+end-of-defun (Move forward to next end of defun.)
+C-M-f:
+forward-sexp (Move forward across one balanced expression (sexp).)
+C-M-h:
+mark-defun (Move forward across one balanced expression (sexp).)
+
+13. C-h k C-g 
+C-g runs the keyboard-quit command, which signals a 'quit' condition.
+More specifically, it aborts a partially typed or executing command.
+It is an interactive compiled Lisp function in 'Simple.el'.
+
+14. C-h f yank
+yank reinserts, or "pastes", the last stretch of killed text.
+More specifically, it refers the text most recently killed OR yanked. 
+
+15. In terminal: 
+cd /usr/bin
+ls -l
+In emacs: 
+C-x d Enter
+The difference is ls -l lists the files with different colors and more
+variations of colors compared to using the dired command from emacs.

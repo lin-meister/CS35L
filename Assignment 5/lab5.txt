@@ -1,0 +1,152 @@
+$ wget http://web.cs.ucla.edu/classes/fall16/cs35L/assign/coreutils-with-bug.tar.gz
+
+Use wget to get the buggy coreutils files.
+
+=====
+
+$ tar -xzvf coreutils-with-bug-tar.gz
+
+Extract the coreutils zip.
+
+=====
+
+$ cd coreutils-with-bug
+
+Enter the unzipped directory.
+
+$ ./configure
+$ make
+
+The build process ran into an error: conflicting types for 'futimens' in
+the file /usr/include/sys/stat.h. There was a note that the previous
+declaration of 'futimens' was here.
+
+=====
+
+$ wget http://web.cs.ucla.edu/classes/fall16/cs35L/assign/coreutils.diff
+
+Use wget to get the patch.
+
+=====
+
+$ patch -p0 < coreutils.diff
+
+Patch the current version of coreutils.
+
+=====
+
+$ ./configure
+
+$ make
+
+Build the patched coreutils. The error did not appear this time.
+
+$ emacs coreutils.diff
+
+I looked at the patch file to see what changes it made to get rid of the error.
+It seems that the variables named "futimens" and "tee" were all renamed to
+"coreutils_futimens" and "coreutils_tee", so there were no conflicting types
+anymore.
+
+=====
+
+$ tmp=$(mktemp -d)
+$ cd $tmp
+$ touch -d '1918-11-11 11:00 GMT' wwi-armistice
+$ touch now
+$ sleep 1
+$ touch now1
+$ TZ=UTC0 ls -lt --full-time wwi-armistice now now1
+
+Reproduce the bug. As expected, the oldest file appears at the top, looking
+as if it were the newest file at a time far newer than its actual time
+of creation.
+
+=====
+
+emacs ~/hw5/coreutils-with-bug/src/ls.c
+
+Look at the code in the ls.c file. Since the bug can be described as
+an error in the comparison of time, I searched the file for functions related
+to time comparisons and found three functions: cmp_ctime, cmp_mtime, and
+cmp_atime.
+
+$ gdb ~/hw5/coreutils-with-bug/src/ls
+
+Start a gdb debugging session and specify the file to debug.
+
+(gdb) b cmp_ctime
+(gdb) b cmp_mtime
+(gdb) b cmp_atime
+
+Set up breakpoints at the 3 functions related to comparing time.
+
+(gdb) run -lt
+
+Run the file on the current $tmp directory. Apparently only Breakpoint 2,
+the cmp_mtime, is hit when running the file.
+
+(gdb) s
+
+Use s to let the debugger continue to the next source line. I found that a
+function timespec_cmp at ../lib/timespec.h:48 was called and it seemed to
+return a difference in time.
+
+(gdb) q
+
+Quit the debugging session.
+
+$ emacs ~/hw5/coreutils-with-bug/lib/timespec.h
+
+Look at the timespec.h file, specifically at line 48, which contains the code
+
+     int diff = a.tv_sec - b.tv_sec;
+
+This will work when comparing recent files, but I think that when
+comparing a very old file such as one from 1918 vs. a recent file, it will
+return a large negative integer which will cause integer overflow.
+
+$ cd ~/hw5/coreutils-with-bug/lib
+$ cp timespec.h timespec_edited.h
+$ emacs timespec_edited.h
+
+Enter the directory where timespec.h is and make a copy of it.
+I edited the program so that it returns different values depending on whether
+diff was positive, 0, or negative. If diff >= 0 then I returned diff as is.
+If diff < 0 I returned b.tv_sec - a.tv_sec instead.
+
+=====
+
+C-x 4 a
+C-x C-s C-x C-c
+
+In emacs I added a Changelog entry and exited.
+
+$ diff -u timespec.h timespec_edited.h > ../../lab5.diff
+
+Create the patch file for differences between the old and edited timespec.h
+files.
+
+=====
+
+$ cd ~/hw5
+$ mkdir sample
+$ touch -d '1918-11-11 11:00 GMT' wwi-armistice
+$ touch now
+$ sleep 1
+$ touch now1
+
+Create a directory and the files to reproduce the bug.
+
+$ ls -lt
+
+Ran the already-installed ls utilities on it. The output is different, as it
+shows the wwi-armistice file to have been created in 2054 instead of 1918:
+
+-rw-r--r-- 1 classnin class 0 Dec 17  2054 wwi-armistice
+-rw-r--r-- 1 classnin class 0 Oct 27 17:00 now1
+-rw-r--r-- 1 classnin class 0 Oct 27 17:00 now
+
+The reason for this is that SEASnet NFS filesystem has unsigned 32-bit time
+stamps, whereas the local file system on the Linux server has signed 32-bit
+time stamps. This difference may have caused the output shown.

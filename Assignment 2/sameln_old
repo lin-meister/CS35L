@@ -1,0 +1,165 @@
+#! /bin/bash
+
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+
+# Find all the regular files and save it in an array
+dot_files=( $( find $1 -maxdepth 1 -type f -printf '%f\n' | grep "^\." | sort) )
+
+for f1 in "${dot_files[@]}"
+do
+    test -r "$f1"
+    readable_1=$?
+    if [[ $readable_1 -eq 1 ]]
+    then
+	echo "$f1 is not readable"
+    fi
+
+    # Inner loop
+    for f2 in "${dot_files[@]}"
+    do
+	test -r "$f2"
+	readable_2=$?
+        if [[ $readable_2 -eq 1 ]]
+        then
+	    echo "$f2 is not readable"
+	    # break
+        fi
+
+	# Compare the two files against each other
+	# and save the status code (If 0 then they are same)
+	cmp -s "$f1" "$f2"
+	status=$?
+
+	# If they are duplicates and not the same file, then print
+	#if [[ $status -eq "0" && readable_1 -eq 0 && readable_2 -eq 0 && $f1 != $f2 ]]
+	if [[ $status -eq "0" && $readable_1 -eq "0" && $readable_2 -eq "0" && $f1 != $f2 ]]
+	    then
+	        echo "$f1 and $f2 are duplicate files"
+
+		# If file 1 starts with a . and file 2 does not then it takes priority
+		if [[ "$f1" == \.* && "$f2" != \.* ]]
+		then
+		    echo "$f1 is lexicographically first. Removing $f2 and creating a symbolic link here..."
+		    rm "$f2"
+		    #delete=($f2)
+		    #all_files=( "${all_files[@]/$delete}" )
+		    ln -L "$f1" "$f2"
+		    
+	        # If file 2 starts with a . and file 2 does not then it takes priority
+		else if [[ "$f2" == \.* && "$f1" != \.* ]]
+		then
+		    echo "$f2 is lexicographically first. Removing $f1 and creating a symbolic link here..."
+		    rm "$f1"
+		    #delete=($f1)
+		    #all_files=( "${all_files[@]/$delete}" )
+		    ln -L "$f2" "$f1"
+		    
+       		# If both of them start with a . or neither of them start with a .
+		else
+		    if [[ "$f1" < "$f2" ]]
+			#if [[ "$f1" == \.* && "$f2" != \.* ]] 
+		    then
+			echo "$f1 is lexicographically first. Removing $f2 and creating a symbolic link here..."
+			rm "$f2"
+			#delete=($f2)
+			#all_files=( "${all_files[@]/$delete}" )
+			ln -L "$f1" "$f2"
+			
+		    else if [[ "f2" < "$f1" ]]
+			    #else if [[ "$f2" == \.* && "$f1" != \.* ]]
+		    then
+			echo "$f2 is lexicographically first. Removing $f1 and creating a symbolic link here..."
+			rm "$f1"
+			#delete=($f1)
+			#all_files=( "${all_files[@]/$delete}" )
+			ln -L "$f2" "$f1"
+		    fi
+		fi
+	fi
+	fi
+	fi
+    done
+done
+
+all_files=( $( find $1 -maxdepth 1 -type f -printf '%f\n' | sort) )
+
+for f1 in "${all_files[@]}"
+do
+    test -r "$f1"
+    readable_1=$?
+    if [[ $readable_1 -eq 1 ]]
+    then
+	echo "$f1 is not readable"
+    fi
+
+    # Inner loop
+    for f2 in "${all_files[@]}"
+    do
+	test -r "$f2"
+	readable_2=$?
+        if [[ $readable_2 -eq 1 ]]
+        then
+	    echo "$f2 is not readable"
+	    # break
+        fi
+
+	# Compare the two files against each other
+	# and save the status code (If 0 then they are same)
+	cmp -s "$f1" "$f2"
+	status=$?
+
+	# If they are duplicates and not the same file, then print
+	#if [[ $status -eq "0" && readable_1 -eq 0 && readable_2 -eq 0 && $f1 != $f2 ]]
+	if [[ $status -eq "0" && $readable_1 -eq "0" && $readable_2 -eq "0" && $f1 != $f2 ]]
+	    then
+	        echo "$f1 and $f2 are duplicate files"
+
+		# If file 1 starts with a . and file 2 does not then it takes priority
+		if [[ "$f1" == \.* && "$f2" != \.* ]]
+		then
+		    echo "$f1 is lexicographically first. Removing $f2 and creating a symbolic link here..."
+		    rm "$f2"
+		    #delete=($f2)
+		    #all_files=( "${all_files[@]/$delete}" )
+		    ln -L "$f1" "$f2"
+		    
+	        # If file 2 starts with a . and file 2 does not then it takes priority
+		else if [[ "$f2" == \.* && "$f1" != \.* ]]
+		then
+		    echo "$f2 is lexicographically first. Removing $f1 and creating a symbolic link here..."
+		    rm "$f1"
+		    #delete=($f1)
+		    #all_files=( "${all_files[@]/$delete}" )
+		    ln -L "$f2" "$f1"
+		    
+       		# If both of them start with a . or neither of them start with a .
+		else
+		    if [[ "$f1" < "$f2" ]]
+			#if [[ "$f1" == \.* && "$f2" != \.* ]] 
+		    then
+			echo "$f1 is lexicographically first. Removing $f2 and creating a symbolic link here..."
+			rm "$f2"
+			#delete=($f2)
+			#all_files=( "${all_files[@]/$delete}" )
+			ln -L "$f1" "$f2"
+			
+		    else if [[ "f2" < "$f1" ]]
+			    #else if [[ "$f2" == \.* && "$f1" != \.* ]]
+		    then
+			echo "$f2 is lexicographically first. Removing $f1 and creating a symbolic link here..."
+			rm "$f1"
+			#delete=($f1)
+			#all_files=( "${all_files[@]/$delete}" )
+			ln -L "$f2" "$f1"
+		    fi
+		fi
+	fi
+	fi
+	fi
+    done
+done
+
+IFS=$SAVEIFS
+
+exit 0

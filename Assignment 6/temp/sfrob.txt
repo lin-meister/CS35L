@@ -1,0 +1,82 @@
+I created 4 test files: frob10.txt, frob100.txt, frob1000.txt,
+and frob10000.txt. Each of them contained the frobnicated string
+
+'*~BO *{_CIA *hXE]D *LER #@_GZY #E\\OX #^BO #FKPS #NEM\4'
+
+repeated 10, 100, 1000, and 10000 times, respectively.
+
+=====
+
+Test results
+
+sfrob				sfrobu
+------------------------------------
+frob10.txt
+
+real	0m0.002s	real	0m0.002s
+user 	0m0.000s	user	0m0.000s
+sys  	0m0.001s	sys	0m0.002s
+------------------------------------
+frob100.txt
+
+real    0m0.002s	real    0m0.008s
+user    0m0.000s	user    0m0.002s
+sys	0m0.003s	sys	0m0.007s
+------------------------------------
+frob1000.txt
+
+real    0m0.004s	real    0m0.067s
+user    0m0.003s	user    0m0.010s
+sys     0m0.001s	sys     0m0.057s
+------------------------------------
+frob10000.txt
+
+real	0m0.005s	real	0m0.755s
+user    0m0.003s	user    0m0.116s
+sys     0m0.001s	sys     0m0.606s
+
+
+We see that sfrobu takes longer to process than sfrob, because again,
+it is using system calls which are more expensive on performance.
+This difference also increases more and more as the number of input lines
+gets exponentially increased.
+
+=====
+
+Test results for sfrobs
+
+frob10.txt		real	0m0.009s
+			user 	0m0.004s
+			sys  	0m0.006s
+
+frob100.txt		real    0m0.010s
+			user    0m0.008s
+			sys	0m0.003s
+		
+frob1000.txt		real    0m0.011s
+			user    0m0.006s
+			sys     0m0.006s
+
+frob10000.txt		real	0m0.158s
+			user    0m0.009s
+			sys     0m0.015s
+
+sfrobs is slower overall than sfrob, and slower when handling smaller files
+compared to sfrobu. However, it outperforms sfrobu when handling larger files.
+
+=====
+
+# of input lines	Comparisons
+-----------------------------------
+10			477
+100			7447
+1000			1023333
+10000			1308492
+
+The relation between these two variables can be expressed as the function:
+
+y = 108.48x + 283624
+
+where x represents the number of input lines and y represents the
+number of comparisons.
+

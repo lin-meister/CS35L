@@ -1,0 +1,10 @@
+I took a screenshot of the latest merge before 2015-01-25.
+
+The first window on the top left contains a timeline of the commits and
+merges of the master repository. The top middle and right windows contain the
+commit authors, their emails, and the date of the commit. Below the top left
+window, there is a SHA ID, which is the commit's unique identifier.
+
+For a selected commit, the lower left window contains all the file changes
+between the master and the commit in diff format. The lower right window
+shows the files that were changed/affected by the selected commit. 

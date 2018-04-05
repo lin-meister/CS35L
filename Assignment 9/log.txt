@@ -1,0 +1,99 @@
+Team members: Chaoran Lin, Christian Warloe, Arjun Boddu
+
+Server side:
+
+$ dpkg --get-selections | grep openssh
+
+First, check if openssh-server and openssh-client is installed so we can have
+the environment set up for ssh. However, the output shows that only
+openssh-client was installed.
+
+=====
+
+$ sudo apt-get install openssh-server
+
+Installed openssh-server. Packages were downloaded and installed successfully.
+
+=====
+
+$ ssh-keygen
+
+I first generated some public and private keys for the SSH connection.
+It prompted me for a location to save it, but I just went with the default
+location for this one. Then it prompted me to enter a passphrase.
+After that, it successfully saved my identification and a public key,
+and generated the key's fingerprint and randomart image.
+
+=====
+
+$ sudo useradd -d /home/anon -m anon
+$ sudo passwd anon
+
+I created an account for the client on the server and set up a password
+for that account. For convenience I set the password as simply the username.
+I then gave the username and password to my partners
+so that they could connect.
+
+=====
+
+$ cd /home/anon
+$ sudo mkdir .ssh
+
+Changed into the directory for the user and created a .ssh directory
+for the new user there to store the keys to the host server my partners
+will connect to.
+
+=====
+
+$ sudo chown -R anon .ssh
+$ sudo chmod 700 .ssh
+
+I then changed ownership and permission on the .ssh directory, so that I made
+anon the owner of .ssh and gave read, write, and execute permissions.
+
+=====
+
+$ ifconfig
+
+Get the IP address. My IP address was 10.96.85.181. I then gave this to my
+partner so he could connect to my computer.
+
+=====
+
+Client side:
+
+$ ssh-keygen
+
+Generated public and private keys. Like with what happened in the
+server side, it prompted me for a passphrase and saved to the default location,
+and then generated a fingerprint and image.
+
+=====
+
+$ ssh-copy-id -i chaoran@10.97.85.173
+
+Copied my public key to the server for key-based authentication. It first
+warned me that the authenticity of the host at the IP address can't be
+established and asked me if I wanted to proceed. I proceeded
+and it prompted me to enter the password for the remote host. After doing that,
+it showed that the keys were added and I could log in to the machine.
+
+=====
+
+$ ssh-add
+
+Added a private key to the authentication agent (ssh-agent).
+
+=====
+
+$ ssh -X chaoran@10.97.85.173
+
+I logged into the server via SSH and enabled X11 forwarding for my session.
+I connected successfully and started a session.
+
+=====
+
+$ firefox
+
+I ran a command on the remote host, which opened a browser window in Firefox,
+confirming that it works.

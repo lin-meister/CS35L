@@ -1,0 +1,19 @@
+#! /bin/bash
+
+export LC_ALL='C'
+
+DECRYPTED=""
+ENCRYPTED=""
+
+for ((i=0; i <= 255; ++i))
+do
+    DECRYPTED+=$i
+    ENCRYPTED+=$((i^42))
+    if (($i != 255))
+    then
+	DECRYPTED+="\\"
+	ENCRYPTED+="\\"
+    fi
+done
+
+cat | tr "$DECRYPTED" "$ENCRYPTED" | sort | tr "$ENCRYPTED" "$DECRYPTED"
